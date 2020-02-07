@@ -22,11 +22,24 @@ void print_statistics(struct universe *u);
 /*You can modify after this line again*/
 
 void read_in_file(FILE *infile, struct universe *u) {
+  char c_char = fgetc(infile);
   
+
+  while (c_char != EOF) {
+    while (c_char != 10) {
+        
+    }
+  } 
 }
 
 void write_out_file(FILE *outfile, struct universe *u) {
-
+  for (unsigned int i = 0; i < u->nb_rows; i++) {
+    for (unsigned int j = 0; j < u->nb_columns; j++) {
+      fputc(*(*(u->cells + i) + j) ? 0x2A : 0x2E, outfile);
+    }
+    fputc(0x0A, outfile);
+  }
+  fputc(EOF, outfile);
 }
 
 int is_alive(struct universe *u, int column, int row) {
