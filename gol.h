@@ -31,15 +31,9 @@ void read_in_file(FILE *infile, struct universe *u) {
     exit(1);
   }
 
-  char c_char = fgetc(infile);
-  
-  while (c_char != EOF) {
-    while (c_char != 10) {
-        
-    }
-  } 
 }
 
+// Write out current universe to file
 void write_out_file(FILE *outfile, struct universe *u) {
   if (!outfile) {
     fprintf(stderr, "ERROR: 'outfile' is null");
@@ -52,13 +46,14 @@ void write_out_file(FILE *outfile, struct universe *u) {
 
   for (unsigned int i = 0; i < u->nb_rows; i++) {
     for (unsigned int j = 0; j < u->nb_columns; j++) {
-      fputc(*(*(u->cells + i) + j) ? 0x2A : 0x2E, outfile);
+      fputc(*(*(u->cells + i) + j) ? 0x2A : 0x2E, outfile); // Write either * or .
     }
-    fputc(0x0A, outfile);
+    fputc(0x0A, outfile); // Add newline character
   }
-  fputc(EOF, outfile);
+  fputc(EOF, outfile); // Add EOF
 }
 
+// Checks if a given cell is alive
 int is_alive(struct universe *u, int column, int row) {
   if (!u) {
     fprintf(stderr, "ERROR: 'universe' is null");
@@ -75,9 +70,10 @@ int is_alive(struct universe *u, int column, int row) {
     exit(1);
   }
 
-  return *(*(u->cells + row) + column);
+  return *(*(u->cells + row) + column); // Dereference along rows, then columns and return cell value
 }
 
+// Rule function to check if given cell will be alive next time
 int will_be_alive(struct universe *u, int column, int row) {
   unsigned int nb_alive = 0;
 
@@ -98,19 +94,24 @@ int will_be_alive(struct universe *u, int column, int row) {
 
   for (int i = -1; i < 2; i++) {
     for (int j = -1; j < 2; j++) {
+      // Ignore centre cell when counting
       if (i == 0 && j == 0) continue;
+
+      // Ignore if extends out of universe
       if (row+i < 0 || (unsigned)(row+i) >= u->nb_rows) continue;
       if (column+i < 0 || (unsigned)(column+i) >= u->nb_columns) continue;
-      nb_alive += is_alive(u, column+i, row+j);
+      nb_alive += is_alive(u, column+i, row+j); // Increment by cell value
     }
   }
 
+  // Evaluate rules depending on nb_alive and cell state
   if (is_alive(u, column, row)) {
     return nb_alive == 2 || nb_alive == 3 ? 1:0;
   }
   return nb_alive == 3 ? 1:0;
 }
 
+// Rule function to check if given cell will be alive next time (assuming torus universe)
 int will_be_alive_torus(struct universe *u, int column, int row) {
   unsigned int nb_alive = 0;
 
@@ -143,10 +144,12 @@ int will_be_alive_torus(struct universe *u, int column, int row) {
       t_row = t_row < 0 ? u->nb_rows - 1 : t_row;
       t_row = t_row >= (int)u->nb_rows ? 0 : t_row;
 
-      nb_alive += is_alive(u, t_column, t_row);
+      nb_alive += is_alive(u, t_column, t_row); // Increment by cell value
       
     }
   }
+
+  // Evaluate rules depending on nb_alive and cell state
   if (is_alive(u, column, row)) {
     return nb_alive == 2 || nb_alive == 3 ? 1:0;
   }
@@ -154,6 +157,7 @@ int will_be_alive_torus(struct universe *u, int column, int row) {
 
 }
 
+// Update state (generate next_state, then update pointers)
 void evolve(struct universe *u, int (*rule)(struct universe *u, int column, int row)) {
   if (!u) {
     fprintf(stderr, "ERROR: 'universe is null'");
@@ -169,11 +173,8 @@ void evolve(struct universe *u, int (*rule)(struct universe *u, int column, int 
   u->cells = u->next_state;
 }
 
+// Print statistics about current and previous generations
 void print_statistics(struct universe *u) {
-  // Store running total of average and number of steps
-  // New average = nb_alive / nb_total
-  // Running average = new_average + running_average / nb_steps
-  
   if (!u) {
     fprintf(stderr, "ERROR: 'universe' is null"):
   }
@@ -188,6 +189,11 @@ void print_statistics(struct universe *u) {
   }
 
   float new_average = (float)nb_alive / (float)nb_total;
+
+  // Update running average
   u->nb_steps += 1;
   u->average_alive = (u->average_alive + new_average)/u->nb_steps;
+
+  fprintf(stdout, "%.3f%% of cells currently alive\n", new_average*100.0);
+  fprintf(stdout, "%.3f%% of cells alive on average", u->average_alive*100.0);
 }
