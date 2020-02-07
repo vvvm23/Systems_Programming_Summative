@@ -4,6 +4,8 @@
 
 #define MAX_COLUMNS 512
 
+// TODO: Migrate to gol.c
+
 struct universe {
 /*Put some appropriate things here*/
   unsigned int **cells;
