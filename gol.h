@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#define MAX_COLUMNS 512
+
 struct universe {
 /*Put some appropriate things here*/
   unsigned int **cells;
@@ -35,14 +37,31 @@ void read_in_file(FILE *infile, struct universe *u) {
   unsigned int nb_rows;
   unsigned int nb_columns;
 
-  char *buf = (char*) malloc(1024*sizeof(char));
-  fgets(buf, 1024, infile); // Check this.
+  char *buf = (char*) malloc(MAX_COLUMNS*sizeof(char));
+
+  if (!buf) {
+    fprintf(stderr, "ERROR: Failed to allocate memory to 'buf'");
+    exit(1);
+  }
+
+  fgets(buf, MAX_COLUMNS, infile); // Check this.
 
   nb_columns = strlen(buf);
   nb_rows = 1;
 
   u->cells = (unsigned int**)malloc(sizeof(int*));
+
+  if (!u->cells) {
+    fprintf(stderr, "ERROR: Failed to allocate memory for row in 'universe'");
+    exit(1);
+  }
+
   *(u->cells) = (unsigned int*)malloc(sizeof(int)*nb_columns);
+
+  if (!*(u->cells)) {
+    fprintf(stderr, "ERROR: Failed to allocate memory to cells in row in 'universe'");
+    exit(1);
+  }
 
   for (unsigned int i = 0; i < nb_columns; i++) {
     *(*(u->cells) + i) = *(buf+i) == '*' ? 1 : 0;
@@ -50,16 +69,25 @@ void read_in_file(FILE *infile, struct universe *u) {
 
   nb_rows = 1;
 
-  // TODO: Check buffer size
-  // TODO: Ensure pointers initialised properly
-  while (fgets(buf, 1024, infile)) {
+  while (fgets(buf, MAX_COLUMNS, infile)) {
     if (strlen(buf) != nb_columns) {
       fprintf(stderr, "ERROR: Malformed input file");
       exit(1);
     }
     nb_rows++;
     u->cells = (unsigned int**)realloc(u->cells, sizeof(int*)*nb_rows);
+
+    if (!u->cells) {
+      fprintf(stderr, "ERROR: Failed to allocate memory for row in 'universe'");
+      exit(1);
+    }
+
     *(u->cells + nb_rows - 1) = (unsigned int*)malloc(sizeof(int)*nb_columns);
+      
+    if (!*(u->cells)) {
+      fprintf(stderr, "ERROR: Failed to allocate memory to cells in row in 'universe'");
+      exit(1);
+    }
 
     for (unsigned int i = 0; i < nb_columns; i++) {
       *(*(u->cells + nb_rows - 1) + i) = *(buf+i) == '*' ? 1 : 0;
