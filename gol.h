@@ -22,9 +22,17 @@ void print_statistics(struct universe *u);
 /*You can modify after this line again*/
 
 void read_in_file(FILE *infile, struct universe *u) {
+  if (!infile) {
+    fprintf(stderr, "ERROR: 'outfile' is null");
+    exit(1);
+  }
+  if (!u) {
+    fprintf(stderr, "ERROR: 'universe' is null");
+    exit(1);
+  }
+
   char c_char = fgetc(infile);
   
-
   while (c_char != EOF) {
     while (c_char != 10) {
         
@@ -33,6 +41,15 @@ void read_in_file(FILE *infile, struct universe *u) {
 }
 
 void write_out_file(FILE *outfile, struct universe *u) {
+  if (!outfile) {
+    fprintf(stderr, "ERROR: 'outfile' is null");
+    exit(1);
+  }
+  if (!u) {
+    fprintf(stderr, "ERROR: 'universe' is null");
+    exit(1);
+  }
+
   for (unsigned int i = 0; i < u->nb_rows; i++) {
     for (unsigned int j = 0; j < u->nb_columns; j++) {
       fputc(*(*(u->cells + i) + j) ? 0x2A : 0x2E, outfile);
