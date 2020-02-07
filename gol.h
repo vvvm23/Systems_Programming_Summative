@@ -7,6 +7,8 @@ struct universe {
   unsigned int **next_state;
   unsigned int nb_rows;
   unsigned int nb_columns;
+  float average_alive = 0.0;
+  unsigned int nb_steps;
 };
 
 /*Do not modify the next seven lines*/
@@ -138,5 +140,24 @@ void evolve(struct universe *u, int (*rule)(struct universe *u, int column, int 
 }
 
 void print_statistics(struct universe *u) {
+  // Store running total of average and number of steps
+  // New average = nb_alive / nb_total
+  // Running average = new_average + running_average / nb_steps
+  
+  if (!u) {
+    fprintf(stderr, "ERROR: 'universe' is null"):
+  }
 
+  unsigned int nb_alive = 0;
+  unsigned int nb_total = u->nb_rows * u->nb_columns;
+
+  for (unsigned int i = 0; i < u->nb_rows; i++) {
+    for (unsigned int j = 0; j < u->nb_columns; j++) {
+      nb_alive += is_alive(u, j, i);
+    }
+  }
+
+  float new_average = (float)nb_alive / (float)nb_total;
+  u->nb_steps += 1;
+  u->average_alive = (u->average_alive + new_average)/u->nb_steps;
 }
