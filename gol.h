@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 struct universe {
 /*Put some appropriate things here*/
@@ -29,6 +30,40 @@ void read_in_file(FILE *infile, struct universe *u) {
   if (!u) {
     fprintf(stderr, "ERROR: 'universe' is null");
     exit(1);
+  }
+
+  unsigned int nb_rows;
+  unsigned int nb_columns;
+
+  char *buf = (char*) malloc(1024*sizeof(char));
+  fgets(buf, 1024, infile); // Check this.
+
+  nb_columns = strlen(buf);
+  nb_rows = 1;
+
+  u->cells = (unsigned int**)malloc(sizeof(int*));
+  *(u->cells) = (unsigned int*)malloc(sizeof(int)*nb_columns);
+
+  for (unsigned int i = 0; i < nb_columns; i++) {
+    *(*(u->cells) + i) = *(buf+i) == '*' ? 1 : 0;
+  }
+
+  nb_rows = 1;
+
+  // TODO: Check buffer size
+  // TODO: Ensure pointers initialised properly
+  while (fgets(buf, 1024, infile)) {
+    if (strlen(buf) != nb_columns) {
+      fprintf(stderr, "ERROR: Malformed input file");
+      exit(1);
+    }
+    nb_rows++;
+    u->cells = (unsigned int**)realloc(u->cells, sizeof(int*)*nb_rows);
+    *(u->cells + nb_rows - 1) = (unsigned int*)malloc(sizeof(int)*nb_columns);
+
+    for (unsigned int i = 0; i < nb_columns; i++) {
+      *(*(u->cells + nb_rows - 1) + i) = *(buf+i) == '*' ? 1 : 0;
+    }
   }
 
 }
@@ -170,6 +205,7 @@ void evolve(struct universe *u, int (*rule)(struct universe *u, int column, int 
     }
   }
 
+  // Change cells pointer to next_state
   u->cells = u->next_state;
 }
 
@@ -194,6 +230,7 @@ void print_statistics(struct universe *u) {
   u->nb_steps += 1;
   u->average_alive = (u->average_alive + new_average)/u->nb_steps;
 
+  // Print statistics to stdout
   fprintf(stdout, "%.3f%% of cells currently alive\n", new_average*100.0);
   fprintf(stdout, "%.3f%% of cells alive on average", u->average_alive*100.0);
 }
