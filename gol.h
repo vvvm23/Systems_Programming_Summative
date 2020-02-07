@@ -4,6 +4,7 @@
 struct universe {
 /*Put some appropriate things here*/
   unsigned int **cells;
+  unsigned int **next_state;
   unsigned int nb_rows;
   unsigned int nb_columns;
 };
@@ -96,7 +97,7 @@ int will_be_alive_torus(struct universe *u, int column, int row) {
     exit(1);
   }
 
-  for (int i = -1; i < 2; i++) {
+  for (int i = -1; i < 2; i++) { 
     for (int j = -1; j < 2; j++) {
       if (i == 0 && j == 0) continue;
       
@@ -122,7 +123,18 @@ int will_be_alive_torus(struct universe *u, int column, int row) {
 }
 
 void evolve(struct universe *u, int (*rule)(struct universe *u, int column, int row)) {
+  if (!u) {
+    fprintf(stderr, "ERROR: 'universe is null'");
+    exit(1);
+  } 
 
+  for (unsigned int i = 0; i < u->nb_rows; i++) {
+    for (unsigned int j = 0; j < u->nb_columns; j++) {
+      *(*(u->next_state + i) + j) = rule(u, j, i) ;
+    }
+  }
+
+  u->cells = u->next_state;
 }
 
 void print_statistics(struct universe *u) {
