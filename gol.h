@@ -12,7 +12,7 @@ struct universe {
   unsigned int **next_state;
   unsigned int nb_rows;
   unsigned int nb_columns;
-  float average_alive = 0.0;
+  float average_alive;
   unsigned int nb_steps;
 };
 
@@ -203,10 +203,10 @@ int will_be_alive_torus(struct universe *u, int column, int row) {
       int t_column = column+i;
       int t_row = row+j;
 
-      t_column = t_column < 0 ? u->nb_columns - 1 : t_column;
+      t_column = t_column < 0 ? (int)u->nb_columns - 1 : t_column;
       t_column = t_column >= (int)u->nb_columns ? 0 : t_column;
 
-      t_row = t_row < 0 ? u->nb_rows - 1 : t_row;
+      t_row = t_row < 0 ? (int)u->nb_rows - 1 : t_row;
       t_row = t_row >= (int)u->nb_rows ? 0 : t_row;
 
       nb_alive += is_alive(u, t_column, t_row); // Increment by cell value
@@ -242,7 +242,7 @@ void evolve(struct universe *u, int (*rule)(struct universe *u, int column, int 
 // Print statistics about current and previous generations
 void print_statistics(struct universe *u) {
   if (!u) {
-    fprintf(stderr, "ERROR: 'universe' is null"):
+    fprintf(stderr, "ERROR: 'universe' is null");
   }
 
   unsigned int nb_alive = 0;
