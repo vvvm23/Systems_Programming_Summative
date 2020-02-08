@@ -1,11 +1,12 @@
 #include<stdio.h>
 #include<stdlib.h>
+#include<getopt.h>
 #include"gol.h"
 int main(int argc, char **argv){
   struct universe v; 
 
-  int torus:1 = 0;
-  int stats:1 = 0;
+  int torus = 0;
+  int stats = 0;
   int c;
   char *iname;
   char *oname;
@@ -43,7 +44,7 @@ int main(int argc, char **argv){
   if (!iname) {
     read_in_file(stdin, &v);
   } else {
-    FILE *fp = fopen(iname, 'r');
+    FILE *fp = fopen(iname, "r");
     if (!fp) {
       fprintf(stderr, "ERROR: Failed to open file!");
       exit(1);
@@ -63,7 +64,8 @@ int main(int argc, char **argv){
   if (!oname) {
     write_out_file(stdout, &v);
   } else {
-    fp = fopen(oname, 'w'); 
+    
+    FILE *fp = fopen(oname, "w"); 
     if (!fp) {
       fprintf(stderr, "ERROR: Failed to open file!");
       exit(1);
