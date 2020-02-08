@@ -113,7 +113,7 @@ void write_out_file(FILE *outfile, struct universe *u) {
     }
     fputc(0x0A, outfile); // Add newline character
   }
-  fputc(EOF, outfile); // Add EOF
+  //fputc(EOF, outfile); // Add EOF
 }
 
 // Checks if a given cell is alive

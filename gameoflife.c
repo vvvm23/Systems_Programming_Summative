@@ -2,6 +2,7 @@
 #include<stdlib.h>
 #include<getopt.h>
 #include"gol.h"
+
 int main(int argc, char **argv){
   struct universe v; 
 
