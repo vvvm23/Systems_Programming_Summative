@@ -46,8 +46,6 @@ void read_in_file(FILE *infile, struct universe *u) {
 
   nb_rows = 1;
 
-  // TODO: buf includes newline, must strip
-  // Can simply reduce pointer by one
   while (fgets(buf, MAX_COLUMNS, infile)) {
 
     unsigned int count = strlen(buf) - 1;
@@ -84,6 +82,18 @@ void read_in_file(FILE *infile, struct universe *u) {
   for (unsigned int i = 0; i < nb_rows; i++) {
     *(u->next_state + i) = (unsigned int*)malloc(sizeof(unsigned int)*nb_columns);
   }
+
+  // Update average
+  unsigned int nb_alive = 0;
+  unsigned int nb_total = u->nb_rows * u->nb_columns;
+
+  for (unsigned int i = 0; i < u->nb_rows; i++) {
+    for (unsigned int j = 0; j < u->nb_columns; j++) {
+      nb_alive += is_alive(u, j, i);
+    }
+  }
+  u->average_alive = (float)nb_alive / (float)nb_total;
+  
 }
 
 // Write out current universe to file
@@ -232,6 +242,22 @@ void evolve(struct universe *u, int (*rule)(struct universe *u, int column, int 
   unsigned int **temp = u->cells;
   u->cells = u->next_state;
   u->next_state = temp;
+
+  // Update average
+  unsigned int nb_alive = 0;
+  unsigned int nb_total = u->nb_rows * u->nb_columns;
+
+  for (unsigned int i = 0; i < u->nb_rows; i++) {
+    for (unsigned int j = 0; j < u->nb_columns; j++) {
+      nb_alive += is_alive(u, j, i);
+    }
+  }
+  float new_average = (float)nb_alive / (float)nb_total;
+
+  // Update running average
+  u->nb_steps += 1;
+  u->average_alive += (new_average / u->nb_steps) - (u->average_alive / u->nb_steps); 
+
 }
 
 // Print statistics about current and previous generations
@@ -248,12 +274,7 @@ void print_statistics(struct universe *u) {
       nb_alive += is_alive(u, j, i);
     }
   }
-
   float new_average = (float)nb_alive / (float)nb_total;
-
-  // Update running average
-  u->nb_steps += 1;
-  u->average_alive = (u->average_alive + new_average)/u->nb_steps;
 
   // Print statistics to stdout
   fprintf(stdout, "%.3f%% of cells currently alive\n", new_average*100.0);
