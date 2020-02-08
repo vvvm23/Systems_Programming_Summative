@@ -165,6 +165,11 @@ int will_be_alive(struct universe *u, int column, int row) {
   return nb_alive == 3 ? 1:0;
 }
 
+
+// TODO: In very small worlds, may count the same cells twice
+// **
+// *.
+// for example
 // Rule function to check if given cell will be alive next time (assuming torus universe)
 int will_be_alive_torus(struct universe *u, int column, int row) {
   unsigned int nb_alive = 0;
