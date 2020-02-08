@@ -4,8 +4,6 @@
 
 #define MAX_COLUMNS 512
 
-// TODO: Migrate to gol.c
-
 struct universe {
 /*Put some appropriate things here*/
   unsigned int **cells;
@@ -26,241 +24,241 @@ void evolve(struct universe *u, int (*rule)(struct universe *u, int column, int 
 void print_statistics(struct universe *u);
 /*You can modify after this line again*/
 
-void read_in_file(FILE *infile, struct universe *u) {
-  if (!infile) {
-    fprintf(stderr, "ERROR: 'outfile' is null");
-    exit(1);
-  }
-  if (!u) {
-    fprintf(stderr, "ERROR: 'universe' is null");
-    exit(1);
-  }
+//void read_in_file(FILE *infile, struct universe *u) {
+  //if (!infile) {
+    //fprintf(stderr, "ERROR: 'outfile' is null");
+    //exit(1);
+  //}
+  //if (!u) {
+    //fprintf(stderr, "ERROR: 'universe' is null");
+    //exit(1);
+  //}
 
-  unsigned int nb_rows;
-  unsigned int nb_columns;
+  //unsigned int nb_rows;
+  //unsigned int nb_columns;
 
-  char *buf = (char*) malloc(MAX_COLUMNS*sizeof(char));
+  //char *buf = (char*) malloc(MAX_COLUMNS*sizeof(char));
 
-  if (!buf) {
-    fprintf(stderr, "ERROR: Failed to allocate memory to 'buf'");
-    exit(1);
-  }
+  //if (!buf) {
+    //fprintf(stderr, "ERROR: Failed to allocate memory to 'buf'");
+    //exit(1);
+  //}
 
-  fgets(buf, MAX_COLUMNS, infile); // Check this.
+  //fgets(buf, MAX_COLUMNS, infile); // Check this.
 
-  nb_columns = strlen(buf);
-  nb_rows = 1;
+  //nb_columns = strlen(buf);
+  //nb_rows = 1;
 
-  u->cells = (unsigned int**)malloc(sizeof(int*));
+  //u->cells = (unsigned int**)malloc(sizeof(int*));
 
-  if (!u->cells) {
-    fprintf(stderr, "ERROR: Failed to allocate memory for row in 'universe'");
-    exit(1);
-  }
+  //if (!u->cells) {
+    //fprintf(stderr, "ERROR: Failed to allocate memory for row in 'universe'");
+    //exit(1);
+  //}
 
-  *(u->cells) = (unsigned int*)malloc(sizeof(int)*nb_columns);
+  //*(u->cells) = (unsigned int*)malloc(sizeof(int)*nb_columns);
 
-  if (!*(u->cells)) {
-    fprintf(stderr, "ERROR: Failed to allocate memory to cells in row in 'universe'");
-    exit(1);
-  }
+  //if (!*(u->cells)) {
+    //fprintf(stderr, "ERROR: Failed to allocate memory to cells in row in 'universe'");
+    //exit(1);
+  //}
 
-  for (unsigned int i = 0; i < nb_columns; i++) {
-    *(*(u->cells) + i) = *(buf+i) == '*' ? 1 : 0;
-  }
+  //for (unsigned int i = 0; i < nb_columns; i++) {
+    //*(*(u->cells) + i) = *(buf+i) == '*' ? 1 : 0;
+  //}
 
-  nb_rows = 1;
+  //nb_rows = 1;
 
-  while (fgets(buf, MAX_COLUMNS, infile)) {
-    if (strlen(buf) != nb_columns) {
-      fprintf(stderr, "ERROR: Malformed input file");
-      exit(1);
-    }
-    nb_rows++;
-    u->cells = (unsigned int**)realloc(u->cells, sizeof(int*)*nb_rows);
+  //while (fgets(buf, MAX_COLUMNS, infile)) {
+    //if (strlen(buf) != nb_columns) {
+      //fprintf(stderr, "ERROR: Malformed input file");
+      //exit(1);
+    //}
+    //nb_rows++;
+    //u->cells = (unsigned int**)realloc(u->cells, sizeof(int*)*nb_rows);
 
-    if (!u->cells) {
-      fprintf(stderr, "ERROR: Failed to allocate memory for row in 'universe'");
-      exit(1);
-    }
+    //if (!u->cells) {
+      //fprintf(stderr, "ERROR: Failed to allocate memory for row in 'universe'");
+      //exit(1);
+    //}
 
-    *(u->cells + nb_rows - 1) = (unsigned int*)malloc(sizeof(int)*nb_columns);
+    //*(u->cells + nb_rows - 1) = (unsigned int*)malloc(sizeof(int)*nb_columns);
       
-    if (!*(u->cells)) {
-      fprintf(stderr, "ERROR: Failed to allocate memory to cells in row in 'universe'");
-      exit(1);
-    }
+    //if (!*(u->cells)) {
+      //fprintf(stderr, "ERROR: Failed to allocate memory to cells in row in 'universe'");
+      //exit(1);
+    //}
 
-    for (unsigned int i = 0; i < nb_columns; i++) {
-      *(*(u->cells + nb_rows - 1) + i) = *(buf+i) == '*' ? 1 : 0;
-    }
-  }
+    //for (unsigned int i = 0; i < nb_columns; i++) {
+      //*(*(u->cells + nb_rows - 1) + i) = *(buf+i) == '*' ? 1 : 0;
+    //}
+  //}
 
-}
+//}
 
-// Write out current universe to file
-void write_out_file(FILE *outfile, struct universe *u) {
-  if (!outfile) {
-    fprintf(stderr, "ERROR: 'outfile' is null");
-    exit(1);
-  }
-  if (!u) {
-    fprintf(stderr, "ERROR: 'universe' is null");
-    exit(1);
-  }
+//// Write out current universe to file
+//void write_out_file(FILE *outfile, struct universe *u) {
+  //if (!outfile) {
+    //fprintf(stderr, "ERROR: 'outfile' is null");
+    //exit(1);
+  //}
+  //if (!u) {
+    //fprintf(stderr, "ERROR: 'universe' is null");
+    //exit(1);
+  //}
 
-  for (unsigned int i = 0; i < u->nb_rows; i++) {
-    for (unsigned int j = 0; j < u->nb_columns; j++) {
-      fputc(*(*(u->cells + i) + j) ? 0x2A : 0x2E, outfile); // Write either * or .
-    }
-    fputc(0x0A, outfile); // Add newline character
-  }
-  fputc(EOF, outfile); // Add EOF
-}
+  //for (unsigned int i = 0; i < u->nb_rows; i++) {
+    //for (unsigned int j = 0; j < u->nb_columns; j++) {
+      //fputc(*(*(u->cells + i) + j) ? 0x2A : 0x2E, outfile); // Write either * or .
+    //}
+    //fputc(0x0A, outfile); // Add newline character
+  //}
+  //fputc(EOF, outfile); // Add EOF
+//}
 
-// Checks if a given cell is alive
-int is_alive(struct universe *u, int column, int row) {
-  if (!u) {
-    fprintf(stderr, "ERROR: 'universe' is null");
-    exit(1);
-  }
+//// Checks if a given cell is alive
+//int is_alive(struct universe *u, int column, int row) {
+  //if (!u) {
+    //fprintf(stderr, "ERROR: 'universe' is null");
+    //exit(1);
+  //}
 
-  if (column < 0 || (unsigned int)column >= u->nb_columns) {
-    fprintf(stderr, "ERROR: 'column' outside valid range");
-    exit(1);
-  }
+  //if (column < 0 || (unsigned int)column >= u->nb_columns) {
+    //fprintf(stderr, "ERROR: 'column' outside valid range");
+    //exit(1);
+  //}
 
-  if (row < 0 || (unsigned int)row >= u->nb_rows) {
-    fprintf(stderr, "ERROR: 'row' outside valid range");
-    exit(1);
-  }
+  //if (row < 0 || (unsigned int)row >= u->nb_rows) {
+    //fprintf(stderr, "ERROR: 'row' outside valid range");
+    //exit(1);
+  //}
 
-  return *(*(u->cells + row) + column); // Dereference along rows, then columns and return cell value
-}
+  //return *(*(u->cells + row) + column); // Dereference along rows, then columns and return cell value
+//}
 
-// Rule function to check if given cell will be alive next time
-int will_be_alive(struct universe *u, int column, int row) {
-  unsigned int nb_alive = 0;
+//// Rule function to check if given cell will be alive next time
+//int will_be_alive(struct universe *u, int column, int row) {
+  //unsigned int nb_alive = 0;
 
-  if (!u) {
-    fprintf(stderr, "ERROR: 'universe' is null");
-    exit(1);
-  }
+  //if (!u) {
+    //fprintf(stderr, "ERROR: 'universe' is null");
+    //exit(1);
+  //}
 
-  if (column < 0 || (unsigned int)column >= u->nb_columns) {
-    fprintf(stderr, "ERROR: 'column' outside valid range");
-    exit(1);
-  }
+  //if (column < 0 || (unsigned int)column >= u->nb_columns) {
+    //fprintf(stderr, "ERROR: 'column' outside valid range");
+    //exit(1);
+  //}
 
-  if (row < 0 || (unsigned int)row >= u->nb_rows) {
-    fprintf(stderr, "ERROR: 'row' outside valid range");
-    exit(1);
-  }
+  //if (row < 0 || (unsigned int)row >= u->nb_rows) {
+    //fprintf(stderr, "ERROR: 'row' outside valid range");
+    //exit(1);
+  //}
 
-  for (int i = -1; i < 2; i++) {
-    for (int j = -1; j < 2; j++) {
-      // Ignore centre cell when counting
-      if (i == 0 && j == 0) continue;
+  //for (int i = -1; i < 2; i++) {
+    //for (int j = -1; j < 2; j++) {
+      //// Ignore centre cell when counting
+      //if (i == 0 && j == 0) continue;
 
-      // Ignore if extends out of universe
-      if (row+i < 0 || (unsigned)(row+i) >= u->nb_rows) continue;
-      if (column+i < 0 || (unsigned)(column+i) >= u->nb_columns) continue;
-      nb_alive += is_alive(u, column+i, row+j); // Increment by cell value
-    }
-  }
+      //// Ignore if extends out of universe
+      //if (row+i < 0 || (unsigned)(row+i) >= u->nb_rows) continue;
+      //if (column+i < 0 || (unsigned)(column+i) >= u->nb_columns) continue;
+      //nb_alive += is_alive(u, column+i, row+j); // Increment by cell value
+    //}
+  //}
 
-  // Evaluate rules depending on nb_alive and cell state
-  if (is_alive(u, column, row)) {
-    return nb_alive == 2 || nb_alive == 3 ? 1:0;
-  }
-  return nb_alive == 3 ? 1:0;
-}
+  //// Evaluate rules depending on nb_alive and cell state
+  //if (is_alive(u, column, row)) {
+    //return nb_alive == 2 || nb_alive == 3 ? 1:0;
+  //}
+  //return nb_alive == 3 ? 1:0;
+//}
 
-// Rule function to check if given cell will be alive next time (assuming torus universe)
-int will_be_alive_torus(struct universe *u, int column, int row) {
-  unsigned int nb_alive = 0;
+//// Rule function to check if given cell will be alive next time (assuming torus universe)
+//int will_be_alive_torus(struct universe *u, int column, int row) {
+  //unsigned int nb_alive = 0;
 
-  if (!u) {
-    fprintf(stderr, "ERROR: 'universe' is null");
-    exit(1);
-  }
+  //if (!u) {
+    //fprintf(stderr, "ERROR: 'universe' is null");
+    //exit(1);
+  //}
 
-  if (column < 0 || (unsigned int)column >= u->nb_columns) {
-    fprintf(stderr, "ERROR: 'column' outside valid range");
-    exit(1);
-  }
+  //if (column < 0 || (unsigned int)column >= u->nb_columns) {
+    //fprintf(stderr, "ERROR: 'column' outside valid range");
+    //exit(1);
+  //}
 
-  if (row < 0 || (unsigned int)row >= u->nb_rows) {
-    fprintf(stderr, "ERROR: 'row' outside valid range");
-    exit(1);
-  }
+  //if (row < 0 || (unsigned int)row >= u->nb_rows) {
+    //fprintf(stderr, "ERROR: 'row' outside valid range");
+    //exit(1);
+  //}
 
-  for (int i = -1; i < 2; i++) { 
-    for (int j = -1; j < 2; j++) {
-      if (i == 0 && j == 0) continue;
+  //for (int i = -1; i < 2; i++) { 
+    //for (int j = -1; j < 2; j++) {
+      //if (i == 0 && j == 0) continue;
       
-      // When calculating with torus, we consider horizontal, vertical AND diagonal wrapping neighbours
-      int t_column = column+i;
-      int t_row = row+j;
+      //// When calculating with torus, we consider horizontal, vertical AND diagonal wrapping neighbours
+      //int t_column = column+i;
+      //int t_row = row+j;
 
-      t_column = t_column < 0 ? (int)u->nb_columns - 1 : t_column;
-      t_column = t_column >= (int)u->nb_columns ? 0 : t_column;
+      //t_column = t_column < 0 ? (int)u->nb_columns - 1 : t_column;
+      //t_column = t_column >= (int)u->nb_columns ? 0 : t_column;
 
-      t_row = t_row < 0 ? (int)u->nb_rows - 1 : t_row;
-      t_row = t_row >= (int)u->nb_rows ? 0 : t_row;
+      //t_row = t_row < 0 ? (int)u->nb_rows - 1 : t_row;
+      //t_row = t_row >= (int)u->nb_rows ? 0 : t_row;
 
-      nb_alive += is_alive(u, t_column, t_row); // Increment by cell value
+      //nb_alive += is_alive(u, t_column, t_row); // Increment by cell value
       
-    }
-  }
+    //}
+  //}
 
-  // Evaluate rules depending on nb_alive and cell state
-  if (is_alive(u, column, row)) {
-    return nb_alive == 2 || nb_alive == 3 ? 1:0;
-  }
-  return nb_alive == 3 ? 1:0;
+  //// Evaluate rules depending on nb_alive and cell state
+  //if (is_alive(u, column, row)) {
+    //return nb_alive == 2 || nb_alive == 3 ? 1:0;
+  //}
+  //return nb_alive == 3 ? 1:0;
 
-}
+//}
 
-// Update state (generate next_state, then update pointers)
-void evolve(struct universe *u, int (*rule)(struct universe *u, int column, int row)) {
-  if (!u) {
-    fprintf(stderr, "ERROR: 'universe is null'");
-    exit(1);
-  } 
+//// Update state (generate next_state, then update pointers)
+//void evolve(struct universe *u, int (*rule)(struct universe *u, int column, int row)) {
+  //if (!u) {
+    //fprintf(stderr, "ERROR: 'universe is null'");
+    //exit(1);
+  //} 
 
-  for (unsigned int i = 0; i < u->nb_rows; i++) {
-    for (unsigned int j = 0; j < u->nb_columns; j++) {
-      *(*(u->next_state + i) + j) = rule(u, j, i) ;
-    }
-  }
+  //for (unsigned int i = 0; i < u->nb_rows; i++) {
+    //for (unsigned int j = 0; j < u->nb_columns; j++) {
+      //*(*(u->next_state + i) + j) = rule(u, j, i) ;
+    //}
+  //}
 
-  // Change cells pointer to next_state
-  u->cells = u->next_state;
-}
+  //// Change cells pointer to next_state
+  //u->cells = u->next_state;
+//}
 
-// Print statistics about current and previous generations
-void print_statistics(struct universe *u) {
-  if (!u) {
-    fprintf(stderr, "ERROR: 'universe' is null");
-  }
+//// Print statistics about current and previous generations
+//void print_statistics(struct universe *u) {
+  //if (!u) {
+    //fprintf(stderr, "ERROR: 'universe' is null");
+  //}
 
-  unsigned int nb_alive = 0;
-  unsigned int nb_total = u->nb_rows * u->nb_columns;
+  //unsigned int nb_alive = 0;
+  //unsigned int nb_total = u->nb_rows * u->nb_columns;
 
-  for (unsigned int i = 0; i < u->nb_rows; i++) {
-    for (unsigned int j = 0; j < u->nb_columns; j++) {
-      nb_alive += is_alive(u, j, i);
-    }
-  }
+  //for (unsigned int i = 0; i < u->nb_rows; i++) {
+    //for (unsigned int j = 0; j < u->nb_columns; j++) {
+      //nb_alive += is_alive(u, j, i);
+    //}
+  //}
 
-  float new_average = (float)nb_alive / (float)nb_total;
+  //float new_average = (float)nb_alive / (float)nb_total;
 
-  // Update running average
-  u->nb_steps += 1;
-  u->average_alive = (u->average_alive + new_average)/u->nb_steps;
+  //// Update running average
+  //u->nb_steps += 1;
+  //u->average_alive = (u->average_alive + new_average)/u->nb_steps;
 
-  // Print statistics to stdout
-  fprintf(stdout, "%.3f%% of cells currently alive\n", new_average*100.0);
-  fprintf(stdout, "%.3f%% of cells alive on average", u->average_alive*100.0);
-}
+  //// Print statistics to stdout
+  //fprintf(stdout, "%.3f%% of cells currently alive\n", new_average*100.0);
+  //fprintf(stdout, "%.3f%% of cells alive on average", u->average_alive*100.0);
+//}
