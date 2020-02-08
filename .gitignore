@@ -1,3 +1,5 @@
 *.o
 *.so
 gameoflife
+output.txt
+input.txt
