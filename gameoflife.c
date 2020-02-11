@@ -20,26 +20,21 @@ int main(int argc, char **argv){
 
     switch(argv[i][1]) {
       case 'i':
-        printf("Reading iname!\n");
         i++;
         iname = argv[i];
         break;
       case 'o':
-        printf("Reading oname!\n");
         i++;
         oname = argv[i];
         break;
       case 'g':
-        printf("Reading generations!\n");
         i++;
         nb_generations = atoi(argv[i]);
         break;
       case 's':
-        printf("Statistics on!\n");
         stats = 1;
         break;
       case 't':
-        printf("Torus on!\n");
         torus = 1;
         break;
       default:
