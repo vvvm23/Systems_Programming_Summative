@@ -2,8 +2,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define MAX_COLUMNS 512
-
 struct universe {
 /*Put some appropriate things here*/
   unsigned int **cells;
@@ -23,3 +21,4 @@ int will_be_alive_torus(struct universe *u,  int column, int row);
 void evolve(struct universe *u, int (*rule)(struct universe *u, int column, int row));
 void print_statistics(struct universe *u);
 /*You can modify after this line again*/
+#define MAX_COLUMNS 512

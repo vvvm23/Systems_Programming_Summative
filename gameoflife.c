@@ -12,22 +12,29 @@ int main(int argc, char **argv){
   char *oname = NULL;
   unsigned int nb_generations;
 
+  // Iterate through command line arguments 
   for (unsigned int i = 1; (int)i < argc; i++) {
+    // Check if a flag (starts with -)
     if (!(argv[i][0] == '-')) {
       fprintf(stderr, "ERROR: Invalid command line argument. ");
       exit(1);
     }
 
+    // Check second character in flag (the operator)
     switch(argv[i][1]) {
       case 'i':
+        // Iterate i and get input file name
         i++;
         iname = argv[i];
         break;
       case 'o':
+        // Iterate i and get output file name
         i++;
         oname = argv[i];
         break;
       case 'g':
+        // TODO: Check if generations is a valid numeric string
+        // Iterate i and get number of generations
         i++;
         nb_generations = atoi(argv[i]);
         break;
@@ -81,8 +88,6 @@ int main(int argc, char **argv){
   if (stats) {
     print_statistics(&v);
   }
-
-  // TODO: Release all memory! (Should technically do automatically..)
 
   return 0;
 }

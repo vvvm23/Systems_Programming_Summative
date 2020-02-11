@@ -1,5 +1,6 @@
 #include "gol.h"
 
+// TODO: Reading in of Windows style files
 void read_in_file(FILE *infile, struct universe *u) {
   if (!infile) {
     fprintf(stderr, "ERROR: 'outfile' is null");
@@ -97,6 +98,7 @@ void read_in_file(FILE *infile, struct universe *u) {
 }
 
 // Write out current universe to file
+// TODO: Line endings for windows files
 void write_out_file(FILE *outfile, struct universe *u) {
   if (!outfile) {
     fprintf(stderr, "ERROR: 'outfile' is null");
