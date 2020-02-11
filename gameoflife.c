@@ -1,6 +1,6 @@
 #include<stdio.h>
 #include<stdlib.h>
-#include<getopt.h>
+#include<string.h>
 #include"gol.h"
 
 int main(int argc, char **argv){
@@ -8,41 +8,42 @@ int main(int argc, char **argv){
 
   int torus = 0;
   int stats = 0;
-  int c;
   char *iname = NULL;
   char *oname = NULL;
   unsigned int nb_generations;
 
-  while ((c = getopt(argc, argv, "i:o:g:st")) != -1) {
-    switch(c) {
+  for (unsigned int i = 1; (int)i < argc; i++) {
+    if (!(argv[i][0] == '-')) {
+      fprintf(stderr, "ERROR: Invalid command line argument. ");
+      exit(1);
+    }
+
+    switch(argv[i][1]) {
       case 'i':
         printf("Reading iname!\n");
-        iname = optarg;
-        printf("Read! %s\n", iname);
+        i++;
+        iname = argv[i];
         break;
       case 'o':
         printf("Reading oname!\n");
-        oname = optarg;
-        printf("Read! %s\n", oname);
+        i++;
+        oname = argv[i];
         break;
       case 'g':
-        printf("Reading nb_gen\n");
-        nb_generations = atoi(optarg); // SEGFAULT HERE
-        printf("Read! %d\n", nb_generations);
+        printf("Reading generations!\n");
+        i++;
+        nb_generations = atoi(argv[i]);
         break;
       case 's':
-        printf("Statistics on.\n");
+        printf("Statistics on!\n");
         stats = 1;
         break;
       case 't':
-        printf("Torus on.\n");
+        printf("Torus on!\n");
         torus = 1;
         break;
-      case ':':
-        fprintf(stderr, "Missing required value! Exiting..\n");
-        exit(1);
-      case '?':
-        fprintf(stderr, "Unknown option: '%c' Exiting..\n", optopt);
+      default:
+        fprintf(stderr, "ERROR: Unknown flag!");
         exit(1);
     }
   }
@@ -85,6 +86,8 @@ int main(int argc, char **argv){
   if (stats) {
     print_statistics(&v);
   }
+
+  // TODO: Release all memory! (Should technically do automatically..)
 
   return 0;
 }
