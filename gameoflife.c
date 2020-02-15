@@ -10,7 +10,7 @@ int main(int argc, char **argv){
   int stats = 0;
   char *iname = NULL;
   char *oname = NULL;
-  unsigned int nb_generations;
+  unsigned int nb_generations = 5;
 
   // Iterate through command line arguments 
   for (unsigned int i = 1; (int)i < argc; i++) {
@@ -49,8 +49,6 @@ int main(int argc, char **argv){
         exit(1);
     }
   }
-
-  nb_generations = nb_generations ? nb_generations : 5;
 
   if (iname == NULL) {
     read_in_file(stdin, &v);
