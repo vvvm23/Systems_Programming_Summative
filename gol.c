@@ -136,6 +136,11 @@ void write_out_file(FILE *outfile, struct universe *u) {
     exit(1);
   }
 
+  if (!u->cells) {
+    fprintf(stderr, "ERROR: 'cells' is undefined!\n");
+    exit(1);
+  }
+
   for (unsigned int i = 0; i < u->nb_rows; i++) {
     for (unsigned int j = 0; j < u->nb_columns; j++) {
       fputc(*(*(u->cells + i) + j) ? 0x2A : 0x2E, outfile); // Write either * or .
@@ -149,6 +154,11 @@ void write_out_file(FILE *outfile, struct universe *u) {
 int is_alive(struct universe *u, int column, int row) {
   if (!u) {
     fprintf(stderr, "ERROR: 'universe' is null!\n");
+    exit(1);
+  }
+
+  if (!u->cells) {
+    fprintf(stderr, "ERROR: 'cells' is undefined!\n");
     exit(1);
   }
 
@@ -170,6 +180,11 @@ int will_be_alive(struct universe *u, int column, int row) {
   unsigned int nb_alive = 0;
   if (!u) {
     fprintf(stderr, "ERROR: 'universe' is null!\n");
+    exit(1);
+  }
+
+  if (!u->cells) {
+    fprintf(stderr, "ERROR: 'cells' is undefined!\n");
     exit(1);
   }
 
@@ -208,6 +223,11 @@ int will_be_alive_torus(struct universe *u, int column, int row) {
 
   if (!u) {
     fprintf(stderr, "ERROR: 'universe' is null!\n");
+    exit(1);
+  }
+
+  if (!u->cells) {
+    fprintf(stderr, "ERROR: 'cells' is undefined!\n");
     exit(1);
   }
 
@@ -254,6 +274,16 @@ void evolve(struct universe *u, int (*rule)(struct universe *u, int column, int 
     exit(1);
   } 
 
+  if (!u->cells) {
+    fprintf(stderr, "ERROR: 'cells' is undefined!\n");
+    exit(1);
+  }
+
+  if (!u->next_state) {
+    fprintf(stderr, "ERROR: 'next_state' is undefined!\n");
+    exit(1);
+  }
+
   for (unsigned int i = 0; i < u->nb_rows; i++) {
     for (unsigned int j = 0; j < u->nb_columns; j++) {
       *(*(u->next_state + i) + j) = rule(u, j, i) ;
@@ -286,6 +316,12 @@ void evolve(struct universe *u, int (*rule)(struct universe *u, int column, int 
 void print_statistics(struct universe *u) {
   if (!u) {
     fprintf(stderr, "ERROR: 'universe' is null!\n");
+    exit(1);
+  }
+
+  if (!u->cells) {
+    fprintf(stderr, "ERROR: 'cells' is undefined!\n");
+    exit(1);
   }
 
   unsigned int nb_alive = 0;
