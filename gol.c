@@ -145,6 +145,7 @@ void write_out_file(FILE *outfile, struct universe *u) {
 }
 
 // Checks if a given cell is alive
+// TODO: Change to [] notation?
 int is_alive(struct universe *u, int column, int row) {
   if (!u) {
     fprintf(stderr, "ERROR: 'universe' is null!\n");
@@ -167,7 +168,6 @@ int is_alive(struct universe *u, int column, int row) {
 // Rule function to check if given cell will be alive next time
 int will_be_alive(struct universe *u, int column, int row) {
   unsigned int nb_alive = 0;
-
   if (!u) {
     fprintf(stderr, "ERROR: 'universe' is null!\n");
     exit(1);
@@ -299,7 +299,9 @@ void print_statistics(struct universe *u) {
   float new_average = (float)nb_alive / (float)nb_total;
 
   // Print statistics to stdout
-  fprintf(stdout, "%.3f%% of cells currently alive\n", new_average*100.0);
-  fprintf(stdout, "%.3f%% of cells alive on average\n", u->average_alive*100.0);
+  float p_new_average = roundf(new_average * 1000.0) / 1000.0;
+  float p_average_alive = roundf(u->average_alive * 1000.0) / 1000.0;
+  fprintf(stdout, "%.3f%% of cells currently alive\n", p_new_average*100.0);
+  fprintf(stdout, "%.3f%% of cells alive on average\n", p_average_alive*100.0);
 }
 
