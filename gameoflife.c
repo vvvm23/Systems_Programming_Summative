@@ -3,6 +3,7 @@
 #include<string.h>
 #include"gol.h"
 
+// TODO: can I use **argv? instead of *argv[]
 int main(int argc, char **argv){
   struct universe v; 
 
@@ -41,13 +42,12 @@ int main(int argc, char **argv){
         oname = argv[i];
         break;
       case 'g':
-        // TODO: Check if generations is a valid numeric string
-        // Iterate i and get number of generations
         i++;
         if ((int)i >= argc) {
           fprintf(stderr, "ERROR: Invalid argument option.\n");
           exit(1);
         }
+
         nb_generations = atoi(argv[i]);
         break;
       case 's':

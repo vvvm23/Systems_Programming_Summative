@@ -1,6 +1,16 @@
 #include "gol.h"
 
 void read_in_file(FILE *infile, struct universe *u) {
+  if (!infile) {
+    fprintf(stderr, "ERROR: 'infile' is null!\n");
+    exit(1);
+  }
+  if (!u) {
+    fprintf(stderr, "ERROR: 'universe' is null!\n");
+    exit(1);
+  }
+
+  // if cells already defined, free memory
   if (u->cells) {
     for (unsigned int i = 0; i < u->nb_rows; i++) {
       free(*(u->cells + i));
@@ -12,15 +22,6 @@ void read_in_file(FILE *infile, struct universe *u) {
     u->nb_columns = 0;
     u->average_alive = 0.0;
     u->nb_steps = 0;
-  }
-
-  if (!infile) {
-    fprintf(stderr, "ERROR: 'infile' is null!\n");
-    exit(1);
-  }
-  if (!u) {
-    fprintf(stderr, "ERROR: 'universe' is null!\n");
-    exit(1);
   }
 
   unsigned int nb_rows = 0;
@@ -36,6 +37,10 @@ void read_in_file(FILE *infile, struct universe *u) {
   fgets(buf, MAX_COLUMNS, infile); // Check this.
 
   nb_columns = strlen(buf) - 1;
+  if (nb_columns < 1) {
+    fprintf(stderr, "ERROR: Input file had no columns!\n");
+    exit(1);
+  }
   *(buf + nb_columns) = '\0';
   nb_rows = 1;
 
@@ -54,7 +59,12 @@ void read_in_file(FILE *infile, struct universe *u) {
   }
 
   for (unsigned int i = 0; i < nb_columns; i++) {
-    *(*(u->cells) + i) = *(buf+i) == '*' ? 1 : 0;
+      char c_char = *(buf+i);
+      if (! (c_char == '*' || c_char == '.')) {
+        fprintf(stderr, "Invalid symbol in input file!\n");
+        exit(1);
+      }
+    *(*(u->cells) + i) = c_char == '*' ? 1 : 0;
   }
 
   nb_rows = 1;
@@ -84,13 +94,19 @@ void read_in_file(FILE *infile, struct universe *u) {
     }
 
     for (unsigned int i = 0; i < nb_columns; i++) {
-      *(*(u->cells + nb_rows - 1) + i) = *(buf+i) == '*' ? 1 : 0;
+      char c_char = *(buf+i);
+      if (! (c_char == '*' || c_char == '.')) {
+        fprintf(stderr, "Invalid symbol in input file!");
+        exit(1);
+      }
+      *(*(u->cells + nb_rows - 1) + i) = c_char == '*' ? 1 : 0;
     }
   }
   u->nb_rows = nb_rows;
   u->nb_columns = nb_columns;
   u->nb_steps = 0;
 
+  // Initialise next state
   u->next_state = (unsigned int**)malloc(sizeof(unsigned int*)*nb_rows);
   for (unsigned int i = 0; i < nb_rows; i++) {
     *(u->next_state + i) = (unsigned int*)malloc(sizeof(unsigned int)*nb_columns);
@@ -106,11 +122,10 @@ void read_in_file(FILE *infile, struct universe *u) {
     }
   }
   u->average_alive = (float)nb_alive / (float)nb_total;
-  free(buf);
+  free(buf); // Free buffer memory
 }
 
 // Write out current universe to file
-// TODO: Line endings for windows files
 void write_out_file(FILE *outfile, struct universe *u) {
   if (!outfile) {
     fprintf(stderr, "ERROR: 'outfile' is null!\n");
@@ -127,7 +142,6 @@ void write_out_file(FILE *outfile, struct universe *u) {
     }
     fputc(0x0A, outfile); // Add newline character
   }
-  //fputc(EOF, outfile); // Add EOF
 }
 
 // Checks if a given cell is alive
@@ -174,7 +188,6 @@ int will_be_alive(struct universe *u, int column, int row) {
       // Ignore centre cell when counting
       if (i == 0 && j == 0) continue;
 
-
       // Ignore if extends out of universe
       if (row+i < 0 || (unsigned)(row+i) >= u->nb_rows) continue;
       if (column+j < 0 || (unsigned)(column+j) >= u->nb_columns) continue;
@@ -189,11 +202,6 @@ int will_be_alive(struct universe *u, int column, int row) {
   return nb_alive == 3 ? 1:0;
 }
 
-
-// TODO: In very small worlds, may count the same cells twice
-// **
-// *.
-// for example
 // Rule function to check if given cell will be alive next time (assuming torus universe)
 int will_be_alive_torus(struct universe *u, int column, int row) {
   unsigned int nb_alive = 0;
@@ -271,10 +279,10 @@ void evolve(struct universe *u, int (*rule)(struct universe *u, int column, int 
   // Update running average
   u->nb_steps += 1;
   u->average_alive += (new_average / u->nb_steps) - (u->average_alive / u->nb_steps); 
-
 }
 
 // Print statistics about current and previous generations
+// TODO: Check if this is rounding!
 void print_statistics(struct universe *u) {
   if (!u) {
     fprintf(stderr, "ERROR: 'universe' is null!\n");
