@@ -1,6 +1,5 @@
 #include "gol.h"
 
-// TODO: Reading in of Windows style files
 void read_in_file(FILE *infile, struct universe *u) {
   if (u->cells) {
     for (unsigned int i = 0; i < u->nb_rows; i++) {
@@ -16,11 +15,11 @@ void read_in_file(FILE *infile, struct universe *u) {
   }
 
   if (!infile) {
-    fprintf(stderr, "ERROR: 'outfile' is null");
+    fprintf(stderr, "ERROR: 'infile' is null!\n");
     exit(1);
   }
   if (!u) {
-    fprintf(stderr, "ERROR: 'universe' is null");
+    fprintf(stderr, "ERROR: 'universe' is null!\n");
     exit(1);
   }
 
@@ -30,7 +29,7 @@ void read_in_file(FILE *infile, struct universe *u) {
   char *buf = (char*) malloc(MAX_COLUMNS*sizeof(char));
 
   if (!buf) {
-    fprintf(stderr, "ERROR: Failed to allocate memory to 'buf'");
+    fprintf(stderr, "ERROR: Failed to allocate memory to 'buf'!\n");
     exit(1);
   }
 
@@ -43,14 +42,14 @@ void read_in_file(FILE *infile, struct universe *u) {
   u->cells = (unsigned int**)malloc(sizeof(int*));
 
   if (!u->cells) {
-    fprintf(stderr, "ERROR: Failed to allocate memory for row in 'universe'");
+    fprintf(stderr, "ERROR: Failed to allocate memory for row in 'universe'!\n");
     exit(1);
   }
 
   *(u->cells) = (unsigned int*)malloc(sizeof(int)*nb_columns);
 
   if (!*(u->cells)) {
-    fprintf(stderr, "ERROR: Failed to allocate memory to cells in row in 'universe'");
+    fprintf(stderr, "ERROR: Failed to allocate memory to cells in row in 'universe'!\n");
     exit(1);
   }
 
@@ -66,21 +65,21 @@ void read_in_file(FILE *infile, struct universe *u) {
     *(buf + count) = '\0';
 
     if (count != nb_columns) {
-      fprintf(stderr, "ERROR: Malformed input file");
+      fprintf(stderr, "ERROR: Malformed input file!\n");
       exit(1);
     }
     nb_rows++;
     u->cells = (unsigned int**)realloc(u->cells, sizeof(int*)*nb_rows);
 
     if (!u->cells) {
-      fprintf(stderr, "ERROR: Failed to allocate memory for row in 'universe'");
+      fprintf(stderr, "ERROR: Failed to allocate memory for row in 'universe'!\n");
       exit(1);
     }
 
     *(u->cells + nb_rows - 1) = (unsigned int*)malloc(sizeof(int)*nb_columns);
       
     if (!*(u->cells)) {
-      fprintf(stderr, "ERROR: Failed to allocate memory to cells in row in 'universe'");
+      fprintf(stderr, "ERROR: Failed to allocate memory to cells in row in 'universe'!\n");
       exit(1);
     }
 
@@ -114,11 +113,11 @@ void read_in_file(FILE *infile, struct universe *u) {
 // TODO: Line endings for windows files
 void write_out_file(FILE *outfile, struct universe *u) {
   if (!outfile) {
-    fprintf(stderr, "ERROR: 'outfile' is null");
+    fprintf(stderr, "ERROR: 'outfile' is null!\n");
     exit(1);
   }
   if (!u) {
-    fprintf(stderr, "ERROR: 'universe' is null");
+    fprintf(stderr, "ERROR: 'universe' is null!\n");
     exit(1);
   }
 
@@ -134,17 +133,17 @@ void write_out_file(FILE *outfile, struct universe *u) {
 // Checks if a given cell is alive
 int is_alive(struct universe *u, int column, int row) {
   if (!u) {
-    fprintf(stderr, "ERROR: 'universe' is null");
+    fprintf(stderr, "ERROR: 'universe' is null!\n");
     exit(1);
   }
 
   if (column < 0 || (unsigned int)column >= u->nb_columns) {
-    fprintf(stderr, "ERROR: 'column' outside valid range");
+    fprintf(stderr, "ERROR: 'column' outside valid range!\n");
     exit(1);
   }
 
   if (row < 0 || (unsigned int)row >= u->nb_rows) {
-    fprintf(stderr, "ERROR: 'row' outside valid range");
+    fprintf(stderr, "ERROR: 'row' outside valid range!\n");
     exit(1);
   }
 
@@ -156,17 +155,17 @@ int will_be_alive(struct universe *u, int column, int row) {
   unsigned int nb_alive = 0;
 
   if (!u) {
-    fprintf(stderr, "ERROR: 'universe' is null");
+    fprintf(stderr, "ERROR: 'universe' is null!\n");
     exit(1);
   }
 
   if (column < 0 || (unsigned int)column >= u->nb_columns) {
-    fprintf(stderr, "ERROR: 'column' outside valid range");
+    fprintf(stderr, "ERROR: 'column' outside valid range!\n");
     exit(1);
   }
 
   if (row < 0 || (unsigned int)row >= u->nb_rows) {
-    fprintf(stderr, "ERROR: 'row' outside valid range");
+    fprintf(stderr, "ERROR: 'row' outside valid range!\n");
     exit(1);
   }
 
@@ -200,17 +199,17 @@ int will_be_alive_torus(struct universe *u, int column, int row) {
   unsigned int nb_alive = 0;
 
   if (!u) {
-    fprintf(stderr, "ERROR: 'universe' is null");
+    fprintf(stderr, "ERROR: 'universe' is null!\n");
     exit(1);
   }
 
   if (column < 0 || (unsigned int)column >= u->nb_columns) {
-    fprintf(stderr, "ERROR: 'column' outside valid range");
+    fprintf(stderr, "ERROR: 'column' outside valid range!\n");
     exit(1);
   }
 
   if (row < 0 || (unsigned int)row >= u->nb_rows) {
-    fprintf(stderr, "ERROR: 'row' outside valid range");
+    fprintf(stderr, "ERROR: 'row' outside valid range!\n");
     exit(1);
   }
 
@@ -243,7 +242,7 @@ int will_be_alive_torus(struct universe *u, int column, int row) {
 // Update state (generate next_state, then update pointers)
 void evolve(struct universe *u, int (*rule)(struct universe *u, int column, int row)) {
   if (!u) {
-    fprintf(stderr, "ERROR: 'universe is null'");
+    fprintf(stderr, "ERROR: 'universe is null'!\n");
     exit(1);
   } 
 
@@ -278,7 +277,7 @@ void evolve(struct universe *u, int (*rule)(struct universe *u, int column, int 
 // Print statistics about current and previous generations
 void print_statistics(struct universe *u) {
   if (!u) {
-    fprintf(stderr, "ERROR: 'universe' is null");
+    fprintf(stderr, "ERROR: 'universe' is null!\n");
   }
 
   unsigned int nb_alive = 0;
@@ -293,6 +292,6 @@ void print_statistics(struct universe *u) {
 
   // Print statistics to stdout
   fprintf(stdout, "%.3f%% of cells currently alive\n", new_average*100.0);
-  fprintf(stdout, "%.3f%% of cells alive on average", u->average_alive*100.0);
+  fprintf(stdout, "%.3f%% of cells alive on average\n", u->average_alive*100.0);
 }
 

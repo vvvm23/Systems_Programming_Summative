@@ -16,7 +16,7 @@ int main(int argc, char **argv){
   for (unsigned int i = 1; (int)i < argc; i++) {
     // Check if a flag (starts with -)
     if (!(argv[i][0] == '-')) {
-      fprintf(stderr, "ERROR: Invalid command line argument. ");
+      fprintf(stderr, "ERROR: Invalid command line argument.\n");
       exit(1);
     }
 
@@ -57,7 +57,7 @@ int main(int argc, char **argv){
         torus = 1;
         break;
       default:
-        fprintf(stderr, "ERROR: Unknown flag!");
+        fprintf(stderr, "ERROR: Unknown flag!\n");
         exit(1);
     }
   }
@@ -67,8 +67,7 @@ int main(int argc, char **argv){
   } else {
     FILE *fp = fopen(iname, "r");
     if (!fp) {
-      fprintf(stderr, "ERROR: Failed to open file to read!");
-      fprintf(stderr, "ERROR: Failed to open file to read!");
+      fprintf(stderr, "ERROR: Failed to open file to read!\n");
       exit(1);
     }
     read_in_file(fp, &v);
@@ -89,7 +88,7 @@ int main(int argc, char **argv){
     
     FILE *fp = fopen(oname, "w"); 
     if (!fp) {
-      fprintf(stderr, "ERROR: Failed to open file to write!");
+      fprintf(stderr, "ERROR: Failed to open file to write!\n");
       exit(1);
     }
     write_out_file(fp, &v);
