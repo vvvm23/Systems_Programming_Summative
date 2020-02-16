@@ -274,6 +274,11 @@ void evolve(struct universe *u, int (*rule)(struct universe *u, int column, int 
     exit(1);
   } 
 
+  if (!rule) {
+    fprintf(stderr, "ERROR: 'rule' is null!\n");
+    exit(1);
+  }
+
   if (!u->cells) {
     fprintf(stderr, "ERROR: 'cells' is undefined!\n");
     exit(1);
