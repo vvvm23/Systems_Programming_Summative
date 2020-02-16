@@ -25,17 +25,29 @@ int main(int argc, char **argv){
       case 'i':
         // Iterate i and get input file name
         i++;
+        if ((int)i >= argc) {
+          fprintf(stderr, "ERROR: Invalid argument option.\n");
+          exit(1);
+        }
         iname = argv[i];
         break;
       case 'o':
         // Iterate i and get output file name
         i++;
+        if ((int)i >= argc) {
+          fprintf(stderr, "ERROR: Invalid argument option.\n");
+          exit(1);
+        }
         oname = argv[i];
         break;
       case 'g':
         // TODO: Check if generations is a valid numeric string
         // Iterate i and get number of generations
         i++;
+        if ((int)i >= argc) {
+          fprintf(stderr, "ERROR: Invalid argument option.\n");
+          exit(1);
+        }
         nb_generations = atoi(argv[i]);
         break;
       case 's':
@@ -55,6 +67,7 @@ int main(int argc, char **argv){
   } else {
     FILE *fp = fopen(iname, "r");
     if (!fp) {
+      fprintf(stderr, "ERROR: Failed to open file to read!");
       fprintf(stderr, "ERROR: Failed to open file to read!");
       exit(1);
     }

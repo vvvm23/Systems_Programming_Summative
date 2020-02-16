@@ -2,6 +2,19 @@
 
 // TODO: Reading in of Windows style files
 void read_in_file(FILE *infile, struct universe *u) {
+  if (u->cells) {
+    for (unsigned int i = 0; i < u->nb_rows; i++) {
+      free(*(u->cells + i));
+      free(*(u->next_state + i));
+    }
+    free(u->cells);
+    free(u->next_state);
+    u->nb_rows = 0;
+    u->nb_columns = 0;
+    u->average_alive = 0.0;
+    u->nb_steps = 0;
+  }
+
   if (!infile) {
     fprintf(stderr, "ERROR: 'outfile' is null");
     exit(1);
@@ -11,8 +24,8 @@ void read_in_file(FILE *infile, struct universe *u) {
     exit(1);
   }
 
-  unsigned int nb_rows;
-  unsigned int nb_columns;
+  unsigned int nb_rows = 0;
+  unsigned int nb_columns = 0;
 
   char *buf = (char*) malloc(MAX_COLUMNS*sizeof(char));
 
@@ -94,7 +107,7 @@ void read_in_file(FILE *infile, struct universe *u) {
     }
   }
   u->average_alive = (float)nb_alive / (float)nb_total;
-  
+  free(buf);
 }
 
 // Write out current universe to file
