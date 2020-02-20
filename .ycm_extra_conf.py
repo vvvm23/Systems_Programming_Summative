@@ -40,8 +40,8 @@ flags = [
 'c',
 '-isystem',
 '/usr/include',
-'-i',
-'gol.h']
+'-I',
+'./']
 
 
 # Set this to the absolute path to the folder (NOT the file!) containing the
