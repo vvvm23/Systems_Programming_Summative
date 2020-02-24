@@ -3,15 +3,16 @@
 #include<string.h>
 #include"gol.h"
 
-// TODO: can I use **argv? instead of *argv[]
 int main(int argc, char **argv){
   struct universe v; 
+
+  int flags[5] = {0,0,0,0,0};
 
   int torus = 0;
   int stats = 0;
   char *iname = NULL;
   char *oname = NULL;
-  unsigned int nb_generations = 5;
+  int nb_generations = 5;
 
   // Iterate through command line arguments 
   for (unsigned int i = 1; (int)i < argc; i++) {
@@ -24,6 +25,11 @@ int main(int argc, char **argv){
     // Check second character in flag (the operator)
     switch(argv[i][1]) {
       case 'i':
+        if (flags[0]) {
+          fprintf(stderr, "ERROR: Duplicate flag!\n");
+          exit(1);
+        }
+        flags[0]++;
         // Iterate i and get input file name
         i++;
         if ((int)i >= argc) {
@@ -33,6 +39,11 @@ int main(int argc, char **argv){
         iname = argv[i];
         break;
       case 'o':
+        if (flags[1]) {
+          fprintf(stderr, "ERROR: Duplicate flag!\n");
+          exit(1);
+        }
+        flags[1]++;
         // Iterate i and get output file name
         i++;
         if ((int)i >= argc) {
@@ -42,6 +53,11 @@ int main(int argc, char **argv){
         oname = argv[i];
         break;
       case 'g':
+        if (flags[2]) {
+          fprintf(stderr, "ERROR: Duplicate flag!\n");
+          exit(1);
+        }
+        flags[2]++;
         i++;
         if ((int)i >= argc) {
           fprintf(stderr, "ERROR: Invalid argument option.\n");
@@ -49,11 +65,24 @@ int main(int argc, char **argv){
         }
 
         nb_generations = atoi(argv[i]);
+        if (nb_generations < 0) {
+          fprintf(stderr, "ERROR: Negative number of generations!\n");
+          exit(1);
+        }
         break;
       case 's':
+        if (flags[3]) {
+          fprintf(stderr, "ERROR: Duplicate flag!\n");
+          exit(1);
+        }
+        flags[3]++;
         stats = 1;
         break;
       case 't':
+        if (flags[4]) {
+          fprintf(stderr, "ERROR: Duplicate flag!\n");
+        }
+        flags[4]++;
         torus = 1;
         break;
       default:
@@ -74,7 +103,7 @@ int main(int argc, char **argv){
     fclose(fp);
   }
 
-  for (unsigned int i = 0; i < nb_generations; i++) {
+  for (unsigned int i = 0; i < (unsigned int)nb_generations; i++) {
     if (torus) {
       evolve(&v, will_be_alive_torus);
     } else {

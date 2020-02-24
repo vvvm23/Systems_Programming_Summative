@@ -11,18 +11,19 @@ void read_in_file(FILE *infile, struct universe *u) {
   }
 
   // if cells already defined, free memory
-  if (u->cells) {
-    for (unsigned int i = 0; i < u->nb_rows; i++) {
-      free(*(u->cells + i));
-      free(*(u->next_state + i));
-    }
-    free(u->cells);
-    free(u->next_state);
-    u->nb_rows = 0;
-    u->nb_columns = 0;
-    u->average_alive = 0.0;
-    u->nb_steps = 0;
-  }
+  /* TODO: breaks on stdin <24-02-20, alex> */
+  /*if (u->cells) {*/
+    /*for (unsigned int i = 0; i < u->nb_rows; i++) {*/
+      /*free(*(u->cells + i));*/
+      /*free(*(u->next_state + i));*/
+    /*}*/
+    /*free(u->cells);*/
+    /*free(u->next_state);*/
+    /*u->nb_rows = 0;*/
+    /*u->nb_columns = 0;*/
+    /*u->average_alive = 0.0;*/
+    /*u->nb_steps = 0;*/
+  /*}*/
 
   unsigned int nb_rows = 0;
   unsigned int nb_columns = 0;
@@ -88,7 +89,7 @@ void read_in_file(FILE *infile, struct universe *u) {
 
     *(u->cells + nb_rows - 1) = (unsigned int*)malloc(sizeof(int)*nb_columns);
       
-    if (!*(u->cells)) {
+    if (!*(u->cells + nb_rows - 1)) {
       fprintf(stderr, "ERROR: Failed to allocate memory to cells in row in 'universe'!\n");
       exit(1);
     }
@@ -108,8 +109,15 @@ void read_in_file(FILE *infile, struct universe *u) {
 
   // Initialise next state
   u->next_state = (unsigned int**)malloc(sizeof(unsigned int*)*nb_rows);
+  if (!u->next_state) {
+    fprintf(stderr, "Failed to allocate memory to 'next_state!'\n");
+  }
+
   for (unsigned int i = 0; i < nb_rows; i++) {
     *(u->next_state + i) = (unsigned int*)malloc(sizeof(unsigned int)*nb_columns);
+    if (!*(u->next_state + i)) {
+      fprintf(stderr, "Failed to allocate memory to row in 'next_state'!\n"); 
+    }
   }
 
   // Update average
@@ -150,7 +158,6 @@ void write_out_file(FILE *outfile, struct universe *u) {
 }
 
 // Checks if a given cell is alive
-// TODO: Change to [] notation?
 int is_alive(struct universe *u, int column, int row) {
   if (!u) {
     fprintf(stderr, "ERROR: 'universe' is null!\n");
@@ -243,8 +250,7 @@ int will_be_alive_torus(struct universe *u, int column, int row) {
 
   for (int i = -1; i < 2; i++) { 
     for (int j = -1; j < 2; j++) {
-      if (i == 0 && j == 0) continue;
-      
+      if (i == 0 && j == 0) continue; // Again, skip centre cell
       // When calculating with torus, we consider horizontal, vertical AND diagonal wrapping neighbours
       int t_column = column+j;
       int t_row = row+i;
@@ -264,7 +270,6 @@ int will_be_alive_torus(struct universe *u, int column, int row) {
     return nb_alive == 2 || nb_alive == 3 ? 1:0;
   }
   return nb_alive == 3 ? 1:0;
-
 }
 
 // Update state (generate next_state, then update pointers)
@@ -317,7 +322,6 @@ void evolve(struct universe *u, int (*rule)(struct universe *u, int column, int 
 }
 
 // Print statistics about current and previous generations
-// TODO: Check if this is rounding!
 void print_statistics(struct universe *u) {
   if (!u) {
     fprintf(stderr, "ERROR: 'universe' is null!\n");
@@ -340,9 +344,7 @@ void print_statistics(struct universe *u) {
   float new_average = (float)nb_alive / (float)nb_total;
 
   // Print statistics to stdout
-  float p_new_average = roundf(new_average * 1000.0) / 1000.0;
-  float p_average_alive = roundf(u->average_alive * 1000.0) / 1000.0;
-  fprintf(stdout, "%.3f%% of cells currently alive\n", p_new_average*100.0);
-  fprintf(stdout, "%.3f%% of cells alive on average\n", p_average_alive*100.0);
+  fprintf(stdout, "%.3f%% of cells currently alive\n", new_average*100.0);
+  fprintf(stdout, "%.3f%% of cells alive on average\n", u->average_alive*100.0);
 }
 

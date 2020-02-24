@@ -4,7 +4,7 @@ all: gameoflife.o libgol.so
 gameoflife.o: gameoflife.c
 	gcc -Wall -Wextra -pedantic -std=c11 -g -c -o gameoflife.o gameoflife.c
 
-gol.o: gol.h
+gol.o: gol.h gol.c
 	gcc -Wall -Wextra -pedantic -std=c11 -g -c -fPIC gol.c -o gol.o -lm
 
 libgol.so: gol.o
