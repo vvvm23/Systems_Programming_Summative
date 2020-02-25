@@ -10,21 +10,6 @@ void read_in_file(FILE *infile, struct universe *u) {
     exit(1);
   }
 
-  // if cells already defined, free memory
-  /* TODO: breaks on stdin <24-02-20, alex> */
-  /*if (u->cells) {*/
-    /*for (unsigned int i = 0; i < u->nb_rows; i++) {*/
-      /*free(*(u->cells + i));*/
-      /*free(*(u->next_state + i));*/
-    /*}*/
-    /*free(u->cells);*/
-    /*free(u->next_state);*/
-    /*u->nb_rows = 0;*/
-    /*u->nb_columns = 0;*/
-    /*u->average_alive = 0.0;*/
-    /*u->nb_steps = 0;*/
-  /*}*/
-
   unsigned int nb_rows = 0;
   unsigned int nb_columns = 0;
 
@@ -105,7 +90,7 @@ void read_in_file(FILE *infile, struct universe *u) {
   }
   u->nb_rows = nb_rows;
   u->nb_columns = nb_columns;
-  u->nb_steps = 0;
+  u->nb_steps = 1;
 
   // Initialise next state
   u->next_state = (unsigned int**)malloc(sizeof(unsigned int*)*nb_rows);
@@ -321,6 +306,7 @@ void evolve(struct universe *u, int (*rule)(struct universe *u, int column, int 
   u->average_alive += (new_average / u->nb_steps) - (u->average_alive / u->nb_steps); 
 }
 
+/* TODO: counts first generation? 0 <25-02-20, alex> */
 // Print statistics about current and previous generations
 void print_statistics(struct universe *u) {
   if (!u) {
