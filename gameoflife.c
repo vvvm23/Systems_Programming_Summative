@@ -22,6 +22,11 @@ int main(int argc, char **argv){
       exit(1);
     }
 
+    if (!(argv[i][2] == 0x00)) {
+      fprintf(stderr, "ERROR: Invalid flag\n");
+      exit(1);
+    }
+
     // Check second character in flag (the operator)
     switch(argv[i][1]) {
       case 'i':
@@ -114,7 +119,6 @@ int main(int argc, char **argv){
   if (!oname) {
     write_out_file(stdout, &v);
   } else {
-    
     FILE *fp = fopen(oname, "w"); 
     if (!fp) {
       fprintf(stderr, "ERROR: Failed to open file to write!\n");
