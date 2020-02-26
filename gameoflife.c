@@ -2,7 +2,6 @@
 #include<stdlib.h>
 #include<string.h>
 #include"gol.h"
-/* TODO: check length of argument. eg -totalbananas <25-02-20, alex> */
 int main(int argc, char **argv){
   struct universe v; 
 

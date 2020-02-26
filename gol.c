@@ -13,14 +13,14 @@ void read_in_file(FILE *infile, struct universe *u) {
   unsigned int nb_rows = 0;
   unsigned int nb_columns = 0;
 
-  char *buf = (char*) malloc(MAX_COLUMNS*sizeof(char));
+  char *buf = (char*) malloc((MAX_COLUMNS+2)*sizeof(char));
 
   if (!buf) {
     fprintf(stderr, "ERROR: Failed to allocate memory to 'buf'!\n");
     exit(1);
   }
 
-  fgets(buf, MAX_COLUMNS, infile); // Check this.
+  fgets(buf, MAX_COLUMNS+2, infile); // Check this.
 
   nb_columns = strlen(buf) - 1;
   if (nb_columns < 1) {
@@ -28,12 +28,15 @@ void read_in_file(FILE *infile, struct universe *u) {
     exit(1);
   }
 
-  /* TODO: Allow for 512 columns!! <26-02-20, alex> */
-  /*if (! (*(buf + nb_columns) == '\n')) {*/
-    /*fprintf(stderr, "ERROR: Input file had columns greater than buffer!\n");*/
-    /*exit(1);*/
-  /*}*/
+  if (nb_columns > MAX_COLUMNS) {
+    fprintf(stderr, "ERROR: Input file had more than 512 columns!\n");
+    exit(1);
+  }
 
+  if (! (*(buf+nb_columns) == '\n')) {
+    fprintf(stderr, "ERROR: Buffer size exceeded!\n");
+    exit(1);
+  }
   *(buf + nb_columns) = '\0';
   nb_rows = 1;
 
@@ -62,21 +65,24 @@ void read_in_file(FILE *infile, struct universe *u) {
 
   nb_rows = 1;
 
-  while (fgets(buf, MAX_COLUMNS, infile)) {
+  while (fgets(buf, MAX_COLUMNS+2, infile)) {
+    if (buf[0] == '\n') {
+      break;
+    }
 
     unsigned int count = strlen(buf) - 1;
 
-    /*if (!(*(buf + count) == '\n')) {*/
-      /*fprintf(stderr, "ERROR: Input file had columns greater than buffer!\n");*/
-      /*exit(1);*/
-    /*}*/
-
+    if (! (*(buf+count) == '\n')) {
+      fprintf(stderr, "ERROR: Buffer size exceeded!\n");
+      exit(1);
+    }
     *(buf + count) = '\0';
 
     if (count != nb_columns) {
       fprintf(stderr, "ERROR: Malformed input file!\n");
       exit(1);
     }
+
     nb_rows++;
     u->cells = (unsigned int**)realloc(u->cells, sizeof(int*)*nb_rows);
 
