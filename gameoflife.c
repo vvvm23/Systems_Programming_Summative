@@ -5,8 +5,11 @@
 int main(int argc, char **argv){
   struct universe v; 
 
+  // For checking for duplicate flags
+  // Not all needed, but I will keep for consistency
   int flags[5] = {0,0,0,0,0};
 
+  // Default values for flags
   int torus = 0;
   int stats = 0;
   char *iname = NULL;
@@ -21,6 +24,8 @@ int main(int argc, char **argv){
       exit(1);
     }
 
+    // If any additional charactes after -X then it is invalid
+    // to avoid cases such as -sandwiches being accepted
     if (!(argv[i][2] == 0x00)) {
       fprintf(stderr, "ERROR: Invalid flag\n");
       exit(1);
@@ -31,11 +36,13 @@ int main(int argc, char **argv){
       case 'i':
         // Iterate i and get input file name
         i++;
+        // Check if the secondary argument exists
         if ((int)i >= argc) {
           fprintf(stderr, "ERROR: Invalid argument option.\n");
           exit(1);
         }
 
+        // If flag is duplicate, check if it conflicts with previous
         if (flags[0] && strcmp(iname, argv[i])) {
           fprintf(stderr, "ERROR: Duplicate flag!\n");
           exit(1);
@@ -47,10 +54,13 @@ int main(int argc, char **argv){
       case 'o':
         // Iterate i and get output file name
         i++;
+        // Check if secondary argument exists
         if ((int)i >= argc) {
           fprintf(stderr, "ERROR: Invalid argument option.\n");
           exit(1);
         }
+
+        // If flag is duplicate, check if it conflicts with previous
         if (flags[1] && strcmp(oname, argv[i])) {
           fprintf(stderr, "ERROR: Duplicate flag!\n");
           exit(1);
@@ -60,16 +70,20 @@ int main(int argc, char **argv){
         break;
       case 'g':
         i++;
+        // Check if secondary argument exists
         if ((int)i >= argc) {
           fprintf(stderr, "ERROR: Invalid argument option.\n");
           exit(1);
         }
+
+        // If flag is duplicate, check if conflicts with previous
         if (flags[2] && nb_generations != atoi(argv[i])) {
           fprintf(stderr, "ERROR: Duplicate flag!\n");
           exit(1);
         }
         flags[2]++;
 
+        // Parse string into integer
         nb_generations = atoi(argv[i]);
         if (nb_generations < 0) {
           fprintf(stderr, "ERROR: Negative number of generations!\n");
@@ -77,17 +91,12 @@ int main(int argc, char **argv){
         }
         break;
       case 's':
-        /*if (flags[3]) {*/
-          /*fprintf(stderr, "ERROR: Duplicate flag!\n");*/
-          /*exit(1);*/
-        /*}*/
+        // Flags cannot conflict so no need to check flag variable
         flags[3]++;
         stats = 1;
         break;
       case 't':
-        /*if (flags[4]) {*/
-          /*fprintf(stderr, "ERROR: Duplicate flag!\n");*/
-        /*}*/
+        // Flags cannot conflict so need to check flag variable
         flags[4]++;
         torus = 1;
         break;
@@ -98,9 +107,10 @@ int main(int argc, char **argv){
   }
 
   if (iname == NULL) {
+    // if no name specified, default to stdin
     read_in_file(stdin, &v);
   } else {
-    FILE *fp = fopen(iname, "r");
+    FILE *fp = fopen(iname, "r"); // Open the file for reading
     if (!fp) {
       fprintf(stderr, "ERROR: Failed to open file to read!\n");
       exit(1);
@@ -109,6 +119,7 @@ int main(int argc, char **argv){
     fclose(fp);
   }
 
+  // Call evolve with specified rule (based on torus) nb_generations times
   for (unsigned int i = 0; i < (unsigned int)nb_generations; i++) {
     if (torus) {
       evolve(&v, will_be_alive_torus);
@@ -118,9 +129,10 @@ int main(int argc, char **argv){
   }
 
   if (!oname) {
+    // if no name specified, default to stdout
     write_out_file(stdout, &v);
   } else {
-    FILE *fp = fopen(oname, "w"); 
+    FILE *fp = fopen(oname, "w"); // Open the file for writing
     if (!fp) {
       fprintf(stderr, "ERROR: Failed to open file to write!\n");
       exit(1);
@@ -129,6 +141,7 @@ int main(int argc, char **argv){
     fclose(fp);
   }
 
+  // Print statistics when finished
   if (stats) {
     print_statistics(&v);
   }
