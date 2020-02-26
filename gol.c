@@ -27,6 +27,13 @@ void read_in_file(FILE *infile, struct universe *u) {
     fprintf(stderr, "ERROR: Input file had no columns!\n");
     exit(1);
   }
+
+  /* TODO: Allow for 512 columns!! <26-02-20, alex> */
+  /*if (! (*(buf + nb_columns) == '\n')) {*/
+    /*fprintf(stderr, "ERROR: Input file had columns greater than buffer!\n");*/
+    /*exit(1);*/
+  /*}*/
+
   *(buf + nb_columns) = '\0';
   nb_rows = 1;
 
@@ -58,6 +65,12 @@ void read_in_file(FILE *infile, struct universe *u) {
   while (fgets(buf, MAX_COLUMNS, infile)) {
 
     unsigned int count = strlen(buf) - 1;
+
+    /*if (!(*(buf + count) == '\n')) {*/
+      /*fprintf(stderr, "ERROR: Input file had columns greater than buffer!\n");*/
+      /*exit(1);*/
+    /*}*/
+
     *(buf + count) = '\0';
 
     if (count != nb_columns) {
