@@ -1,5 +1,6 @@
 #include "gol.h"
 
+// Function to read a file into a universe given a file pointer and universe pointer
 void read_in_file(FILE *infile, struct universe *u) {
   if (!infile) {
     fprintf(stderr, "ERROR: 'infile' is null!\n");
@@ -13,6 +14,7 @@ void read_in_file(FILE *infile, struct universe *u) {
   unsigned int nb_rows = 0;
   unsigned int nb_columns = 0;
 
+  // Create the buffer with room for \n and \0 bytes
   char *buf = (char*) malloc((MAX_COLUMNS+2)*sizeof(char));
 
   if (!buf) {
@@ -20,8 +22,10 @@ void read_in_file(FILE *infile, struct universe *u) {
     exit(1);
   }
 
-  fgets(buf, MAX_COLUMNS+2, infile); // Check this.
+  // Get the initial line from the file
+  fgets(buf, MAX_COLUMNS+2, infile);
 
+  // Calculate number of columns excluding new line
   nb_columns = strlen(buf) - 1;
   if (nb_columns < 1) {
     fprintf(stderr, "ERROR: Input file had no columns!\n");
@@ -33,13 +37,16 @@ void read_in_file(FILE *infile, struct universe *u) {
     exit(1);
   }
 
+  // Check if buffer was filled
   if (! (*(buf+nb_columns) == '\n')) {
     fprintf(stderr, "ERROR: Buffer size exceeded!\n");
     exit(1);
   }
+  // Null out the newline character
   *(buf + nb_columns) = '\0';
   nb_rows = 1;
 
+  // Create initial row in cells 
   u->cells = (unsigned int**)malloc(sizeof(int*));
 
   if (!u->cells) {
@@ -47,6 +54,7 @@ void read_in_file(FILE *infile, struct universe *u) {
     exit(1);
   }
 
+  // Allocate columns in row
   *(u->cells) = (unsigned int*)malloc(sizeof(int)*nb_columns);
 
   if (!*(u->cells)) {
@@ -54,6 +62,7 @@ void read_in_file(FILE *infile, struct universe *u) {
     exit(1);
   }
 
+  // Pass values from buffer to cells
   for (unsigned int i = 0; i < nb_columns; i++) {
       char c_char = *(buf+i);
       if (! (c_char == '*' || c_char == '.')) {
@@ -65,9 +74,11 @@ void read_in_file(FILE *infile, struct universe *u) {
 
   nb_rows = 1;
 
+  // While not EOF
   while (fgets(buf, MAX_COLUMNS+2, infile)) {
+    // If line just contains new line and trigger EOF
     if (buf[0] == '\n') {
-      break;
+      continue;
     }
 
     unsigned int count = strlen(buf) - 1;
@@ -76,14 +87,17 @@ void read_in_file(FILE *infile, struct universe *u) {
       fprintf(stderr, "ERROR: Buffer size exceeded!\n");
       exit(1);
     }
+    // Remove newline
     *(buf + count) = '\0';
 
+    // Ensure rows are same length
     if (count != nb_columns) {
       fprintf(stderr, "ERROR: Malformed input file!\n");
       exit(1);
     }
 
     nb_rows++;
+    // Allocate new row
     u->cells = (unsigned int**)realloc(u->cells, sizeof(int*)*nb_rows);
 
     if (!u->cells) {
@@ -91,6 +105,7 @@ void read_in_file(FILE *infile, struct universe *u) {
       exit(1);
     }
 
+    // Allocate columns in new row
     *(u->cells + nb_rows - 1) = (unsigned int*)malloc(sizeof(int)*nb_columns);
       
     if (!*(u->cells + nb_rows - 1)) {
@@ -98,6 +113,7 @@ void read_in_file(FILE *infile, struct universe *u) {
       exit(1);
     }
 
+    // Move from buffer to cells
     for (unsigned int i = 0; i < nb_columns; i++) {
       char c_char = *(buf+i);
       if (! (c_char == '*' || c_char == '.')) {
@@ -111,7 +127,7 @@ void read_in_file(FILE *infile, struct universe *u) {
   u->nb_columns = nb_columns;
   u->nb_steps = 1;
 
-  // Initialise next state
+  // Initialise next state for use when evolving
   u->next_state = (unsigned int**)malloc(sizeof(unsigned int*)*nb_rows);
   if (!u->next_state) {
     fprintf(stderr, "Failed to allocate memory to 'next_state!'\n");
@@ -153,11 +169,12 @@ void write_out_file(FILE *outfile, struct universe *u) {
     exit(1);
   }
 
+  // Place characters in file pointer one by one
   for (unsigned int i = 0; i < u->nb_rows; i++) {
     for (unsigned int j = 0; j < u->nb_columns; j++) {
       fputc(*(*(u->cells + i) + j) ? 0x2A : 0x2E, outfile); // Write either * or .
     }
-    fputc(0x0A, outfile); // Add newline character
+    fputc(0x0A, outfile); // Add newline character at end of row
   }
 }
 
@@ -298,6 +315,7 @@ void evolve(struct universe *u, int (*rule)(struct universe *u, int column, int 
     exit(1);
   }
 
+  // Generate the next state based on supplied rule
   for (unsigned int i = 0; i < u->nb_rows; i++) {
     for (unsigned int j = 0; j < u->nb_columns; j++) {
       *(*(u->next_state + i) + j) = rule(u, j, i) ;
@@ -325,7 +343,6 @@ void evolve(struct universe *u, int (*rule)(struct universe *u, int column, int 
   u->average_alive += (new_average / u->nb_steps) - (u->average_alive / u->nb_steps); 
 }
 
-/* TODO: counts first generation? 0 <25-02-20, alex> */
 // Print statistics about current and previous generations
 void print_statistics(struct universe *u) {
   if (!u) {
